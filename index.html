@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Link Shortener</h1>
-        <form id="shortener-form">
-            <input type="url" id="long-url" placeholder="Paste a link to shorten" required>
-            <button type="submit" id="shorten-btn">Shorten It</button>
-        </form>
-        
-        <div id="result-container" class="hidden">
-            <p>Shortened URL:</p>
-            <a id="short-url" href="#" target="_blank"></a>
-            <button id="copy-btn">Copy</button>
-        </div>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
 
-        <p id="error-message" class="error-text hidden"></p>
+    <!-- Input URL -->
+    <div class="card">
+      <input type="text" id="longUrl" placeholder="Enter long URL">
+      <button onclick="shortenUrl()">Shorten URL</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Shortened URLs List -->
+    <div class="card">
+      <h2>Your Shortened URLs</h2>
+      <ul id="urlList"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
