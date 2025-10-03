@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Link Shortener</h1>
+        <form id="shortener-form">
+            <input type="url" id="long-url" placeholder="Paste a link to shorten" required>
+            <button type="submit" id="shorten-btn">Shorten It</button>
+        </form>
+        
+        <div id="result-container" class="hidden">
+            <p>Shortened URL:</p>
+            <a id="short-url" href="#" target="_blank"></a>
+            <button id="copy-btn">Copy</button>
+        </div>
+
+        <p id="error-message" class="error-text hidden"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
