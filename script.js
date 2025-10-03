@@ -1,85 +1,45 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('shortener-form');
-    const longUrlInput = document.getElementById('long-url');
-    const resultContainer = document.getElementById('result-container');
-    const shortUrlLink = document.getElementById('short-url');
-    const copyButton = document.getElementById('copy-btn');
-    const errorMessage = document.getElementById('error-message');
-    const shortenButton = document.getElementById('shorten-btn');
+let urls = JSON.parse(localStorage.getItem("urls")) || [];
 
-    // **IMPORTANT:** Replace with your actual API endpoint and key if needed.
-    // This is a common pattern for using a third-party service.
-    const TINYURL_API_URL = 'https://api.tinyurl.com/create';
-    const API_TOKEN = 'YOUR_TINYURL_API_TOKEN'; // Replace with your actual token
+function saveData() {
+  localStorage.setItem("urls", JSON.stringify(urls));
+  renderUrls();
+}
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const longUrl = longUrlInput.value.trim();
+function generateShortCode() {
+  return Math.random().toString(36).substring(2, 8);
+}
 
-        // Basic client-side validation
-        if (!longUrl || !longUrl.startsWith('http')) {
-            showError('Please enter a valid URL (must start with http:// or https://)');
-            return;
-        }
+function shortenUrl() {
+  const longUrl = document.getElementById("longUrl").value.trim();
+  if (!longUrl) {
+    alert("Please enter a URL!");
+    return;
+  }
 
-        // Reset previous results/errors
-        resultContainer.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-        shortenButton.disabled = true;
-        shortenButton.textContent = 'Shortening...';
+  const shortCode = generateShortCode();
+  const shortUrl = `${window.location.origin}/?${shortCode}`;
 
-        try {
-            const response = await fetch(TINYURL_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_TOKEN}` // Authorization header for TinyURL
-                },
-                body: JSON.stringify({
-                    url: longUrl,
-                    domain: 'tinyurl.com' // Optional: Specify a domain
-                })
-            });
+  urls.push({ longUrl, shortUrl });
+  document.getElementById("longUrl").value = "";
+  saveData();
+}
 
-            const data = await response.json();
+function copyUrl(shortUrl) {
+  navigator.clipboard.writeText(shortUrl);
+  alert("Copied to clipboard!");
+}
 
-            if (data && data.data && data.data.tiny_url) {
-                const shortenedUrl = data.data.tiny_url;
-                shortUrlLink.href = shortenedUrl;
-                shortUrlLink.textContent = shortenedUrl;
-                resultContainer.classList.remove('hidden');
-            } else if (data.errors && data.errors.length > 0) {
-                 // Display specific API error
-                showError(`API Error: ${data.errors[0].message}`);
-            } else {
-                showError('Failed to shorten the URL. Check API response.');
-            }
+function renderUrls() {
+  const list = document.getElementById("urlList");
+  list.innerHTML = "";
 
-        } catch (error) {
-            console.error('Error:', error);
-            showError('An unexpected error occurred while connecting to the API.');
-        } finally {
-            shortenButton.disabled = false;
-            shortenButton.textContent = 'Shorten It';
-        }
-    });
+  urls.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${item.shortUrl}</span>
+                    <button onclick="copyUrl('${item.shortUrl}')">Copy</button>`;
+    list.appendChild(li);
+  });
+}
 
-    copyButton.addEventListener('click', () => {
-        const shortUrl = shortUrlLink.textContent;
-        navigator.clipboard.writeText(shortUrl).then(() => {
-            copyButton.textContent = 'Copied!';
-            setTimeout(() => {
-                copyButton.textContent = 'Copy';
-            }, 2000);
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
-            showError('Failed to copy. Please copy manually.');
-        });
-    });
-
-    function showError(message) {
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
-    }
-});
+// Initial render
+renderUrls();
